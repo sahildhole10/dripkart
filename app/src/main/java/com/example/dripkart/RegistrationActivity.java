@@ -4,31 +4,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Random;
 
 public class RegistrationActivity extends AppCompatActivity {
-    // public String name,email;
-    //public String password;
+
     Button button,button3;
     int count;
     EditText ename,eemail,enumber,epassword;
+    FirebaseAuth mAuth;
 
-
-
-    //public  email;
-    //private String name;
-    // public int number;
-    @Override
+  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
@@ -58,25 +59,18 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void register() {
-        //private String  password,name,email;
-        // int number;
-        //  String x="sahil";
-        ename = (EditText) findViewById(R.id.ename);
+          ename = (EditText) findViewById(R.id.ename);
         enumber = (EditText) findViewById(R.id.enumber);
         eemail = (EditText) findViewById(R.id.eemail);
         epassword = (EditText) findViewById(R.id.epassword);
-        //Log.e("X","Xolo"+x);
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            DatabaseReference myRef = database.getReference("message");
-//
-//            myRef.setValue("Hello, World!");
-
-
-//       boolean isEmpty(EditText naya) {
-//           CharSequence str = naya.getText().toString();
-//           return TextUtils.isEmpty(str);
-//       }
         count=1;
+
+
+        String s1 = ename.getText().toString();
+
+        String s4 = eemail.getText().toString();
+        String s5 = epassword.getText().toString();
+
 
         if (isEmpty(ename)) {
             //  Toast t = Toast.makeText(this, "You must enter first name to register!", Toast.LENGTH_SHORT);
@@ -87,7 +81,6 @@ public class RegistrationActivity extends AppCompatActivity {
             count=0;
         }
 
-
         if (isEmpty(enumber)) {
             //  Toast t = Toast.makeText(this, "You must enter first number to register!", Toast.LENGTH_SHORT);
             //  t.show();
@@ -96,7 +89,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
             count=0;
         }
-
 
         if (isEmpty(eemail)) {
             //  Toast t = Toast.makeText(this, "You must enter first email to register!", Toast.LENGTH_SHORT);
@@ -125,49 +117,42 @@ public class RegistrationActivity extends AppCompatActivity {
             epassword.setError("Enter password of atleast 8 length");
 
         }
-
+        if (!Patterns.EMAIL_ADDRESS.matcher(s4).matches()) {
+            eemail.setError("Please enter a valid email");
+        //    editTextEmail.requestFocus();
+            count=0;
+            return;
+        }
 
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        String s1 = ename.getText().toString();
-        //  String s2 = enumber.getText().toString();
-        // int s3=Integer.parseInt(s2);
-
-        String s4 = eemail.getText().toString();
-        String s5 = epassword.getText().toString();
-        //     Random random = new Random();
+          data d=new data(s1,s4,s5);
+         if(count==1) {
+             mDatabase.push().setValue(d);
+             Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+             startActivity(intent);
 
 
-
-        // RegistrationActivity user = new RegistrationActivity();
-        //user.Registrations(s1,s4,s5);
-        data d=new data(s1,s4,s5);
-        //  Log.e("X","Registrationsd: "+name);
-        // Log.e("c", "register1: "+d.name );
-        //mDatabase.setValue(d);
-        //mDatabase.child(Integer.toString(random.nextInt(100))).setValue(d);
-        if(count==1)
-        {
-            mDatabase.push().setValue(d);
-            Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
+             mAuth.signInWithEmailAndPassword(s4, s5).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                 @Override
+                 public void onComplete(@NonNull Task<AuthResult> task) {
+                     //        progressBar.setVisibility(View.GONE);
+                     if (task.isSuccessful()) {
+                         finish();
+                         Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                         startActivity(intent);
+                     } else {
+                         Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                     }
+                 }
+             });
+         }
     }
-
     private boolean isEmpty(EditText c) {
         CharSequence str = c.getText().toString();
         return TextUtils.isEmpty(str);
     }
-
-//
-//    public  void Registrations(String s1,String s4, String s5) {
-//
-//        name = s1;
-//        email = s4;
-//        //  this.number=number;
-//        password=s5;
-//        //Log.e("X","Registrations: "+this.name);
-//    }
 
 }
