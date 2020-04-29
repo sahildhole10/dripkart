@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "997830439355",
+    "firebase_url": "https://sahil-2c9e1.firebaseio.com",
+    "project_id": "sahil-2c9e1",
+    "storage_bucket": "sahil-2c9e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997830439355:android:a2967c21ba46042529949e",
+        "android_client_info": {
+          "package_name": "com.example.damazon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997830439355-kum8a591a7bn4eut89fddvq9bqnkmn8b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaq_ULAhsQ8RTUFQdrd-YSj_kyLti08dU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997830439355-kum8a591a7bn4eut89fddvq9bqnkmn8b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997830439355:android:187f357efbdf94e329949e",
+        "android_client_info": {
+          "package_name": "com.example.dripkart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997830439355-kum8a591a7bn4eut89fddvq9bqnkmn8b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaq_ULAhsQ8RTUFQdrd-YSj_kyLti08dU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997830439355-kum8a591a7bn4eut89fddvq9bqnkmn8b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
