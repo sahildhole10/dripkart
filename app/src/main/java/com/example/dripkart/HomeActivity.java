@@ -18,12 +18,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -36,8 +38,9 @@ import java.util.UUID;
 
 public class HomeActivity extends AppCompatActivity {
 
-    StorageReference storageReference;
+    StorageReference storageReference,ref;
     private final int PICK_IMAGE_REQUEST = 22;
+    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
 
     private static final int PICK_PHOTO_FOR_AVATAR = 0;
     private static final int RESULT_LOAD_IMG =0 ;
@@ -45,14 +48,24 @@ public class HomeActivity extends AppCompatActivity {
      Uri filePath;
     private static final int SELECT_PICTURE = 1;
 
-    private String selectedImagePath;
-    Button select_image,upload_image;
 
+
+     private String selectedImagePath;
+    Button select_image,upload_image;
+    EditText name,price;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-         select_image=findViewById(R.id.select_image);
+
+
+
+        select_image=findViewById(R.id.select_image);
         upload_image=findViewById(R.id.upload_image);
+        name=(EditText) findViewById(R.id.yname);
+        price=(EditText) findViewById(R.id.yprice);
+
+
+
 
 
         select_image.setOnClickListener(new View.OnClickListener() {
@@ -125,15 +138,22 @@ public class HomeActivity extends AppCompatActivity {
     // UploadImage method
     private void uploadImage()
     {
+       final    String username = name.getText().toString();
+        final String userprice = price.getText().toString();
+        final int x= Integer.parseInt(userprice);
+
+        Log.e("X","lfc:"+username);
         if (filePath != null) {
 
+
+//            Log.e("X", "uploadImage: "+username );
             // Code for showing progressDialog while uploading
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-
+           storageReference= firebaseStorage.getReference();
             // Defining the child of storageReference
-            StorageReference ref
+             ref
                     = storageReference
                     .child(
                             "images/"
@@ -158,6 +178,15 @@ public class HomeActivity extends AppCompatActivity {
                                                     "Image Uploaded!!",
                                                     Toast.LENGTH_SHORT)
                                             .show();
+
+                                    StorageMetadata metadata = new StorageMetadata.Builder()
+                                            .setCustomMetadata("name", username)
+                                            .setCustomMetadata("price", userprice)
+                                            .build();
+
+                                    Object uploadTask = ref.putFile(filePath, metadata);
+
+
                                 }
                             })
 

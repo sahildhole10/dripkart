@@ -8,6 +8,8 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,23 +19,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Random;
 
 public class RegistrationActivity extends AppCompatActivity {
 
     Button button,button3;
-    int count;
-    EditText ename,eemail,enumber,epassword;
+    int count,temp;
+    EditText ename,eemail,epassword;
     FirebaseAuth mAuth;
-
+    public RadioGroup rg1;
+    //  RadioGroup radioGroup;
   @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        // Log.e("X","yolo");
         count=0;
 
         button3=findViewById(R.id.button3);
@@ -51,7 +53,33 @@ public class RegistrationActivity extends AppCompatActivity {
                 register();
             }
         });
-    }
+       //   radioGroup=findViewById(R.id.radioGroup);
+
+  }
+
+
+//
+//    public void onRadioButtonClicked(View view) {
+//        // Is the button now checked?
+//        Log.e("X","Fucker");
+//
+//        boolean checked = ((RadioButton) view).isChecked();
+//
+//        // Check which radio button was clicked
+//        switch(view.getId()) {
+//            case R.id.Buyer:
+//                if (checked)
+//                    Log.e("X","Buyer");
+//                    temp=1;
+//                    break;
+//            case R.id.Seller:
+//                if (checked)
+//                 Log.e("X","Seller");
+//                    temp=0;
+//                    break;
+//        }
+//    }
+
 
     private void back() {
         Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
@@ -59,48 +87,35 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void register() {
-          ename = (EditText) findViewById(R.id.ename);
-        enumber = (EditText) findViewById(R.id.enumber);
+       // ename = (EditText) findViewById(R.id.ename);
+
+//        RadioGroup rg = (RadioGroup)findViewById(R.id.radioGroup );
+//        String radiovalue = ((RadioButton)findViewById(rg.getCheckedRadioButtonId())).getText().toString();
+//        if(radiovalue=="Buyer")
+//            Log.e("X","Fucker");
+//        else
+//            Log.e("X","SUcker");
+
         eemail = (EditText) findViewById(R.id.eemail);
         epassword = (EditText) findViewById(R.id.epassword);
         count=1;
+        mAuth = FirebaseAuth.getInstance();
 
+       // String s1 = ename.getText().toString();
 
-        String s1 = ename.getText().toString();
-
-        String s4 = eemail.getText().toString();
+        final String s4 = eemail.getText().toString();
         String s5 = epassword.getText().toString();
 
 
-        if (isEmpty(ename)) {
-            //  Toast t = Toast.makeText(this, "You must enter first name to register!", Toast.LENGTH_SHORT);
-            // t.show();
-            //  ename.requestFocus();
-            ename.setError("Enter name");
 
-            count=0;
-        }
-
-        if (isEmpty(enumber)) {
-            //  Toast t = Toast.makeText(this, "You must enter first number to register!", Toast.LENGTH_SHORT);
-            //  t.show();
-            //enumber.requestFocus();
-            enumber.setError("Enter number");
-
-            count=0;
-        }
 
         if (isEmpty(eemail)) {
-            //  Toast t = Toast.makeText(this, "You must enter first email to register!", Toast.LENGTH_SHORT);
-            //   t.show();
             eemail.setError("Enter email");
             count=0;
         }
 
 
         if (isEmpty(epassword)) {
-            //  Toast t = Toast.makeText(this, "You must enter first password to register!", Toast.LENGTH_SHORT);
-            // t.show();
             epassword.requestFocus();
             count=0;
             epassword.setError("Enter password");
@@ -110,9 +125,7 @@ public class RegistrationActivity extends AppCompatActivity {
         int length = epassword.getText().length();
 
         if (length < 8) {
-            // Toast t = Toast.makeText(this, "Password must be of atleast 8 letters!", Toast.LENGTH_SHORT);
-            //  t.show();
-            epassword.requestFocus();
+             epassword.requestFocus();
             count=0;
             epassword.setError("Enter password of atleast 8 length");
 
@@ -121,35 +134,40 @@ public class RegistrationActivity extends AppCompatActivity {
             eemail.setError("Please enter a valid email");
         //    editTextEmail.requestFocus();
             count=0;
-            return;
         }
 
-        DatabaseReference mDatabase;
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
-          data d=new data(s1,s4,s5);
+      DatabaseReference mDatabase;
+      mDatabase = FirebaseDatabase.getInstance().getReference();
+          datas d=new datas(s4,s5);
          if(count==1) {
-             mDatabase.push().setValue(d);
-             Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
-             startActivity(intent);
+            mDatabase.push().setValue(d);
+//             Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+//             startActivity(intent);
+               //Log.e("X","ky"+s1);
 
-
-             mAuth.signInWithEmailAndPassword(s4, s5).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+             mAuth.createUserWithEmailAndPassword(s4, s5).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                  @Override
                  public void onComplete(@NonNull Task<AuthResult> task) {
-                     //        progressBar.setVisibility(View.GONE);
+                 //    progressBar.setVisibility(View.GONE);
                      if (task.isSuccessful()) {
                          finish();
-                         Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
-                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                         startActivity(intent);
+                        // Log.e("X","bro"+s4);
+                         startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
                      } else {
-                         Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
+                         if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                             Toast.makeText(getApplicationContext(), "You are already registered", Toast.LENGTH_SHORT).show();
+
+                         } else {
+                             Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                         }
+
                      }
                  }
              });
          }
     }
+
     private boolean isEmpty(EditText c) {
         CharSequence str = c.getText().toString();
         return TextUtils.isEmpty(str);
