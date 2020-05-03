@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,6 +32,7 @@ public class RegistrationActivity extends AppCompatActivity {
     EditText ename,eemail,epassword;
     FirebaseAuth mAuth;
     public RadioGroup rg1;
+    public RadioButton rb;
     //  RadioGroup radioGroup;
   @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,32 +55,9 @@ public class RegistrationActivity extends AppCompatActivity {
                 register();
             }
         });
-       //   radioGroup=findViewById(R.id.radioGroup);
 
   }
 
-
-//
-//    public void onRadioButtonClicked(View view) {
-//        // Is the button now checked?
-//        Log.e("X","Fucker");
-//
-//        boolean checked = ((RadioButton) view).isChecked();
-//
-//        // Check which radio button was clicked
-//        switch(view.getId()) {
-//            case R.id.Buyer:
-//                if (checked)
-//                    Log.e("X","Buyer");
-//                    temp=1;
-//                    break;
-//            case R.id.Seller:
-//                if (checked)
-//                 Log.e("X","Seller");
-//                    temp=0;
-//                    break;
-//        }
-//    }
 
 
     private void back() {
@@ -87,15 +66,20 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void register() {
-       // ename = (EditText) findViewById(R.id.ename);
 
-//        RadioGroup rg = (RadioGroup)findViewById(R.id.radioGroup );
+        RadioGroup rg = (RadioGroup)findViewById(R.id.radioGroup );
+        int selectedId = rg.getCheckedRadioButtonId();
+        rb=(RadioButton) findViewById(selectedId);
+        Log.e("B","buttons:"+rb.getText());
 //        String radiovalue = ((RadioButton)findViewById(rg.getCheckedRadioButtonId())).getText().toString();
-//        if(radiovalue=="Buyer")
-//            Log.e("X","Fucker");
-//        else
-//            Log.e("X","SUcker");
-
+         if(rb.getText().equals("Buyer")) {
+            temp = 1;
+            Log.e("Z", "Buyer");
+         }
+            else {
+            temp = 0;
+            Log.e("Z", "Seller");
+        }
         eemail = (EditText) findViewById(R.id.eemail);
         epassword = (EditText) findViewById(R.id.epassword);
         count=1;
@@ -104,7 +88,7 @@ public class RegistrationActivity extends AppCompatActivity {
        // String s1 = ename.getText().toString();
 
         final String s4 = eemail.getText().toString();
-        String s5 = epassword.getText().toString();
+       final String s5 = epassword.getText().toString();
 
 
 
@@ -136,11 +120,9 @@ public class RegistrationActivity extends AppCompatActivity {
             count=0;
         }
 
-      DatabaseReference mDatabase;
-      mDatabase = FirebaseDatabase.getInstance().getReference();
-          datas d=new datas(s4,s5);
-         if(count==1) {
-            mDatabase.push().setValue(d);
+
+
+        if(count==1) {
 //             Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
 //             startActivity(intent);
                //Log.e("X","ky"+s1);
@@ -151,8 +133,19 @@ public class RegistrationActivity extends AppCompatActivity {
                  //    progressBar.setVisibility(View.GONE);
                      if (task.isSuccessful()) {
                          finish();
-                        // Log.e("X","bro"+s4);
-                         startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+
+                         FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+                         String userid=user.getUid();
+                         DatabaseReference mDatabase;
+                         mDatabase = FirebaseDatabase.getInstance().getReference();
+                         datas d=new datas(s4,s5,temp);
+                         mDatabase.child(userid).setValue(d);
+
+                         Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                         //intent.putExtra("id", temp);
+                         startActivity(intent);
+
+
                      } else {
 
                          if (task.getException() instanceof FirebaseAuthUserCollisionException) {

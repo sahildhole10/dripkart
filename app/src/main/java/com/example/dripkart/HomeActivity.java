@@ -57,7 +57,20 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+         Intent intent = getIntent();
+     //   Bundle intent = getIntent().getExtras();
 
+         int temp = intent.getIntExtra("temp", 0);
+       // int id = Integer.parseInt(intent.getString("temp"));
+
+        if(temp==1)
+        {
+            Intent mintent = new Intent(HomeActivity.this, BuyerActivity.class);
+            //intent.putExtra("id", temp);
+            startActivity(mintent);
+        }
+
+        Log.e("X","homeactiivty:"+temp);
 
         select_image=findViewById(R.id.select_image);
         upload_image=findViewById(R.id.upload_image);
