@@ -38,11 +38,6 @@ public class MainActivity extends AppCompatActivity
         button1 = findViewById(R.id.signin);
         button = findViewById(R.id.register);
 
-
-//
-//          Log.e("V"," "+s1);
-//         Log.e("V"," "+s2);
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,7 +97,6 @@ public class MainActivity extends AppCompatActivity
         Log.e("X","user_id:"+userid);
         final View z=v;
 
-
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         reference.child(userid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -112,16 +106,22 @@ public class MainActivity extends AppCompatActivity
               datas d=dataSnapshot.getValue(datas.class);
                 Log.e("X","main callback from storage:"+d.getPassword());
                 temp=d.getTemp();
-//                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+          Log.e("X","Seeing temp value"+temp);
+                if(temp==1)
+                {
+                    Intent mintent = new Intent(MainActivity.this, ImagesActivity.class);
+                    //intent.putExtra("id", temp);
+                    startActivity(mintent);
+                }
+
+//                              Intent intent = new Intent(z.getContext(), HomeActivity.class);
 //                intent.putExtra("temp", temp);
 //                startActivity(intent);
-
-                Intent intent = new Intent(z.getContext(), HomeActivity.class);
-               // EditText editText = (EditText) findViewById(R.id.editText);
-               // String message = editText.getText().toString();
-                intent.putExtra("temp", temp);
-                startActivity(intent);
-
+                else {
+                    Intent mintent = new Intent(MainActivity.this, HomeActivity.class);
+                    //intent.putExtra("id", temp);
+                    startActivity(mintent);
+                }
 
             }
             @Override

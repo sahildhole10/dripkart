@@ -142,7 +142,6 @@ public class RegistrationActivity extends AppCompatActivity {
                          mDatabase.child(userid).setValue(d);
 
                          Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
-                         //intent.putExtra("id", temp);
                          startActivity(intent);
 
 
