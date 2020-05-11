@@ -30,7 +30,6 @@ public class ImagesActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private ImageAdapter mAdapter;
-
     private ProgressBar mProgressCircle;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -62,9 +61,10 @@ public class ImagesActivity extends AppCompatActivity {
                                 //  Log.d(TAG, document.getId() + " => " + document.getData());
                                 String url = (String) document.get("url");
                                 String name = (String) document.get("name");
-                                String price = (String) document.get("price");
-                                Log.e("L", "url:" + url);
-                                Uploadurl upload = new Uploadurl(url, name, price);
+                                Integer price = ((Long) document.get("price")).intValue();
+                                Integer product_id=((Long) document.get("producr_id")).intValue();
+                           //     Log.e("L", "url:" + url);
+                                Uploadurl upload = new Uploadurl(url, name, price,product_id);
                                 mUploads.add(upload);
                             }
                             mAdapter = new ImageAdapter(ImagesActivity.this, mUploads);
@@ -81,11 +81,7 @@ public class ImagesActivity extends AppCompatActivity {
 
 
 }
-//    private void adapter() {
-//
-//        Log.e("c","adapter");
-//
-//
-//    }
-//}
+
+
+
 

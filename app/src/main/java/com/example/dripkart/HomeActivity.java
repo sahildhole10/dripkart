@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     Uri filePath;
     private static final int SELECT_PICTURE = 1;
 
-
+   private static int prod_id=0;
     private String selectedImagePath;
     Button select_image, upload_image;
     EditText name, price;
@@ -136,7 +136,7 @@ public class HomeActivity extends AppCompatActivity {
     private void uploadImage() {
         final String username = name.getText().toString();
         final String userprice = price.getText().toString();
-        final int x = Integer.parseInt(userprice);
+        final int price_int = Integer.parseInt(userprice);
 
         Log.e("X", "lfc:" + username);
         if (filePath != null) {
@@ -177,11 +177,14 @@ public class HomeActivity extends AppCompatActivity {
 
                             //After upload Complete we have to store the Data to firestore.
                             Map<String, Object> file = new HashMap<>();
-                            String c = downloadUrl.toString();
-                            Log.d("uri", "uri dekho 2 " + c);
+                            prod_id++;
+                            // String c = downloadUrl.toString();
+                            //Log.d("uri", "uri dekho 2 " + c);
                             file.put("url", downloadUrl.toString());// We are using it as String because our data type in Firestore will be String
                             file.put("name", username);
-                            file.put("price", userprice);
+                            file.put("price", price_int);
+                            file.put("producr_id", prod_id);
+
                             db.collection("/downloadurl/").document(UUID.randomUUID().toString())
                                     .set(file)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {

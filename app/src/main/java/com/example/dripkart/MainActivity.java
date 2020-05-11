@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
               datas d=dataSnapshot.getValue(datas.class);
                 Log.e("X","main callback from storage:"+d.getPassword());
                 temp=d.getTemp();
-          Log.e("X","Seeing temp value"+temp);
+                Log.e("X","Seeing temp value"+temp);
                 if(temp==1)
                 {
                     Intent mintent = new Intent(MainActivity.this, ImagesActivity.class);
@@ -129,15 +129,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
-
-
         }
-
-
-
-
-
 }
 
 
