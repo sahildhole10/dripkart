@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,18 +53,14 @@ public class MainActivity extends AppCompatActivity
             }
 
         });
-
     }
 
     public void login (View v)
     {
-
         eemail = (EditText) findViewById(R.id.email);
         epassword = (EditText) findViewById(R.id.password);
         s1 = eemail.getText().toString();
         s2 = epassword.getText().toString();
-
-
 
         mAuth.signInWithEmailAndPassword(s1, s2).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -74,7 +69,6 @@ public class MainActivity extends AppCompatActivity
                     // Sign in success, update UI with the signed-in user's information
                     Log.e("d", "signInWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
-
 
                 } else {
                     // If sign in fails, display a message to the user.

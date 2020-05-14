@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context="com.example.dripkart.ImagesActivity">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/cart"
+        android:text="Cart" />
+
     <ProgressBar
         android:id="@+id/progress_circle"
         android:layout_width="wrap_content"

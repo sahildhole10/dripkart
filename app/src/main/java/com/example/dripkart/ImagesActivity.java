@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -35,7 +37,7 @@ public class ImagesActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabaseRef;
     private List<Uploadurl> mUploads;
-
+  Button cartbutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +52,17 @@ public class ImagesActivity extends AppCompatActivity {
 
         mUploads = new ArrayList<>();
 
+        cartbutton =(Button) findViewById(R.id.cart);
 
-        db.collection("downloadurl")
+        cartbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(ImagesActivity.this,CartActivity.class);
+                startActivity(intent);
+            }
+        });
+
+                db.collection("downloadurl")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override

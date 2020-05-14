@@ -30,18 +30,22 @@ import java.util.UUID;
 public class DisplayImage extends AppCompatActivity {
 
     int count;
+    public String id;
+
     ImageView myImage;
-    String url ,name,email;
+    String url,z,name,email;
     int price,product_id;
     Button cart_button;
+    final HashMap<String,Object> cartMap=new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
-
-        Intent intent=getIntent();
+      z="sf";
+        final Intent intent=getIntent();
         Bundle b = intent.getExtras();
-
+         Log.e("V","oncreate called");
         url = intent.getStringExtra("image_url");
         name = intent.getStringExtra("name");
         price = intent.getIntExtra("price",1);
@@ -55,102 +59,107 @@ public class DisplayImage extends AppCompatActivity {
                 //    .centerCrop()
                 .into(myImage);
 
-        final HashMap<String,Object> cartMap=new HashMap<>();
-
-
         cart_button= (Button) findViewById(R.id.button);
         cart_button.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 cartMap.put("product_id", product_id);
                 cartMap.put("name", name);
                 cartMap.put("price", price);
+              //  Log.d("X", "user email:" + email);
 
-                //   FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+                //FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
                 //   String userid=user.getUid();
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
-                    email = user.getEmail();
-                    Log.d("X", "user email:" + email);
+                    Log.d("X", "user not null");
                 }
+                //email = user.getEmail();
+                id=user.getUid();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                check(product_id,id);
 
 //See whether user's cart exist or not
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                DocumentReference docIdRef = db.collection("/cartdata/").document(email);
-                docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                Log.d("X", "Document exists!");
-                                count = 1;
-                                check(product_id,email);
-
-                            } else {
-                                Log.d("X", "Document does not exist!");
-                                count = 0;
-                                check(product_id,email);
-
-                            }
-                        } else {
-                            Log.d("X", "Failed with: ", task.getException());
-                        }
-
-                    }
-                });
-
+//                DocumentReference docIdRef = db.collection("cartdata").document(id);
+//                docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            DocumentSnapshot document = task.getResult();
+//                            if (document.exists()) {
+//                                Log.d("X", "Document exists!");
+//                                count = 1;
+//                                check(product_id,id);
+//
+//                            } else {
+//                                Log.d("X", "Document does not exist!");
+//                                count = 0;
+//                                check(product_id,id);
+//
+//                            }
+//                        } else {
+//                            Log.d("X", "Failed with: ", task.getException());
+//                        }
+//                    }
+//                });
+                   Intent intent=new Intent(DisplayImage.this,ImagesActivity.class);
+                   startActivity(intent);
             }
 
-            private void check(int product_id,String email) {
 
-                Log.d("X", "count:"+count);
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                //If does not exist create new one
-                if (count == 0) {
-                    db = FirebaseFirestore.getInstance();
-                    db.collection("/cartdata/").document(email).collection("/cartdata/"+email).document(String.valueOf(product_id))
-                            .set(cartMap)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("N", "DocumentSnapshot successfully written of cartmap!");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("N", "Error writing document of cartmap");
-                                }
-                            });
-                }
-                //If does exist update user
-                else if(count==1){
-
-                    db = FirebaseFirestore.getInstance();
-
-                    db.collection("/cartdata/").document(email).collection("/cartdata/"+email).document(String.valueOf(product_id))
-                            .update(cartMap)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("X", "DocumentSnapshot successfully updated!");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("X", "Error updating document");
-                                }
-                            });
-                }
-
-
-            }
         });
     }
 
+
+    private void check(int product_id,String id) {
+
+        Log.d("X", "count:"+count);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        //If does not exist create new one
+//        if (count == 0) {
+         //   final HashMap<String,Object> cartMaps=new HashMap<>();
+
+            db = FirebaseFirestore.getInstance();
+            db.collection("/cartdata/").document(id)
+                    .collection("/pid/").document(String.valueOf(product_id))
+                    .set(cartMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("N", "DocumentSnapshot successfully written of cartmap!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("N", "Error writing document of cartmap");
+                        }
+                    });
+//        }
+        //If does exist update user
+//        else if(count==1){
+//
+//            db = FirebaseFirestore.getInstance();
+//            db.collection("/cartdata/").document(id).collection("/pid/").document(String.valueOf(product_id))
+//                    .update(cartMap)
+//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void aVoid) {
+//                            Log.d("X", "DocumentSnapshot successfully updated!");
+//                        }
+//                    })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            Log.d("X", "Error updating document");
+//                        }
+//                    });
+//        }
+
+
+    }
 
 }
 
