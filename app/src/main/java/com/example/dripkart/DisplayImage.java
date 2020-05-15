@@ -44,7 +44,7 @@ public class DisplayImage extends AppCompatActivity {
         setContentView(R.layout.activity_display);
       z="sf";
         final Intent intent=getIntent();
-        Bundle b = intent.getExtras();
+      //  Bundle b = intent.getExtras();
          Log.e("V","oncreate called");
         url = intent.getStringExtra("image_url");
         name = intent.getStringExtra("name");
@@ -67,7 +67,8 @@ public class DisplayImage extends AppCompatActivity {
                 cartMap.put("product_id", product_id);
                 cartMap.put("name", name);
                 cartMap.put("price", price);
-              //  Log.d("X", "user email:" + email);
+                cartMap.put("url", url);
+
 
                 //FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
                 //   String userid=user.getUid();

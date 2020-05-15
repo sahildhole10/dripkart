@@ -101,19 +101,17 @@ public class MainActivity extends AppCompatActivity
                 Log.e("X","main callback from storage:"+d.getPassword());
                 temp=d.getTemp();
                 Log.e("X","Seeing temp value"+temp);
+
+                //Buyer
                 if(temp==1)
                 {
                     Intent mintent = new Intent(MainActivity.this, ImagesActivity.class);
-                    //intent.putExtra("id", temp);
                     startActivity(mintent);
                 }
 
-//                              Intent intent = new Intent(z.getContext(), HomeActivity.class);
-//                intent.putExtra("temp", temp);
-//                startActivity(intent);
+                //Seller
                 else {
                     Intent mintent = new Intent(MainActivity.this, HomeActivity.class);
-                    //intent.putExtra("id", temp);
                     startActivity(mintent);
                 }
 
