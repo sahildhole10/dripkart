@@ -5,10 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,7 +36,8 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter mAdapter;
     private ProgressBar mProgressCircle;
     Map<String, Object> file = new HashMap<>();
-
+    public int total;
+    Button checkout;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String id;
     private List<Uploadurl> mUploads;
@@ -50,6 +57,68 @@ public class CartActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         id=user.getUid();
+
+
+        checkout=findViewById(R.id.checkout);
+
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                db.collection("Total")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                         total = ((Long) document.get("total")).intValue();
+                                      //  Log.e("xcv","yolo");
+
+                                    }
+
+                                  //  Context mcontext=this;
+                                      View v = LayoutInflater.from(this).inflate(R.layout.activity_payment, null);
+//
+//                                    Button b = (Button) v.findViewById(R.id.checkout);
+//                                    b.setOnClickListener(new View.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(View v) {
+//
+//                                            TextView payment = (TextView) findViewById(R.id.payment);
+//                                            payment.setText(String.valueOf(total));
+//
+//                                        }
+//                                    });
+
+                                        Log.e("XXX","Total price is:"+total);
+                                    Intent intent=new Intent(CartActivity.this,PaymentActivity.class);
+                                    intent.putExtra("total",total);
+                                    startActivity(intent);
+
+                                } else {
+                                    Log.e("N", "else");
+                                }
+
+
+
+                            }
+                        });
+
+
+
+
+            }
+        });
+
+//        checkout=(Button)findViewById(R.id.checkout);
+//        checkout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
          db.collection("cartdata").document(id)
                 .collection("pid").get()
@@ -83,33 +152,4 @@ public class CartActivity extends AppCompatActivity {
 
     }
 }
-
-//   db.collection("/cartdata/").document(id)
-//           .collection("pid") .get()
-//           .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//@Override
-//public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//        if (task.isSuccessful()) {
-//        for (QueryDocumentSnapshot document : task.getResult()) {
-//        // Log.d(TAG, document.getId() + " => " + document.getData());
-//        Log.d("V","YO");
-//        // String url = (String) document.get("url");
-//        String name = (String) document.get("name");
-//        Integer price = ((Long) document.get("price")).intValue();
-//        //Log.d("c","price"+price);
-//        Integer product_id=((Long) document.get("producr_id")).intValue();
-//
-//        Cartdata cartdata = new Cartdata( name, price,product_id);
-//        mCartdata.add(cartdata);
-//        }
-//        mAdapter = new CartAdapter(CartActivity.this, mCartdata);
-//        mRecyclerView.setAdapter(mAdapter);
-//        //  mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        mProgressCircle.setVisibility(View.INVISIBLE);
-//
-//        } else {
-//        Log.e("N", "else");
-//        }
-//        }
-//        });
 

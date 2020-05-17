@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -69,8 +71,8 @@ public class MainActivity extends AppCompatActivity
                     // Sign in success, update UI with the signed-in user's information
                     Log.e("d", "signInWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
-
-                } else {
+                }
+                else {
                     // If sign in fails, display a message to the user.
                     Log.e("d", "signInWithEmail:failure", task.getException());
                     Toast.makeText(MainActivity.this, "Authentication failed.",
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-              datas d=dataSnapshot.getValue(datas.class);
+                datas d=dataSnapshot.getValue(datas.class);
                 Log.e("X","main callback from storage:"+d.getPassword());
                 temp=d.getTemp();
                 Log.e("X","Seeing temp value"+temp);
@@ -105,12 +107,13 @@ public class MainActivity extends AppCompatActivity
                 //Buyer
                 if(temp==1)
                 {
-                    Intent mintent = new Intent(MainActivity.this, ImagesActivity.class);
+                    Intent mintent = new Intent(MainActivity.this, BuyActivity.class);
                     startActivity(mintent);
                 }
 
                 //Seller
                 else {
+
                     Intent mintent = new Intent(MainActivity.this, HomeActivity.class);
                     startActivity(mintent);
                 }

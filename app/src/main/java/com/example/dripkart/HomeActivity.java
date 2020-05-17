@@ -15,15 +15,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileUtils;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -51,11 +59,14 @@ public class HomeActivity extends AppCompatActivity {
     Uri filePath;
     private static final int SELECT_PICTURE = 1;
 
-   private static int prod_id=0;
+  // private static int prod_id=0;
     private String selectedImagePath;
     Button select_image, upload_image;
     EditText name, price;
     public Uri downloadUrl;
+    public String itemtype="";
+    public Spinner mySpinner;
+    private int product_id;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +92,38 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 uploadImage();
+            }
+        });
+
+
+         mySpinner = (Spinner) findViewById(R.id.spinner1);
+
+        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(HomeActivity.this,
+                android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.names));
+        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mySpinner.setAdapter(myAdapter);
+
+        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view,
+                                       int position, long id) {
+                Object item = adapterView.getItemAtPosition(position);
+                if (item != null) {
+                     itemtype= (String) adapterView.getItemAtPosition(position);
+                    Log.d("x",":"+itemtype);
+                  //  Toast.makeText(MainActivity.this, item.toString(),
+                    //        Toast.LENGTH_SHORT).show();
+                }
+                //Toast.makeText(MainActivity.this, "Selected",
+                 //       Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // TODO Auto-generated method stub
+
             }
         });
 
@@ -138,6 +181,23 @@ public class HomeActivity extends AppCompatActivity {
         final String userprice = price.getText().toString();
         final int price_int = Integer.parseInt(userprice);
 
+
+            if (isEmpty(name)) {
+                name.setError("Enter name");
+                return;
+            }
+
+        if (isEmpty(price)) {
+            price.setError("Enter price");
+            return;
+        }
+
+        if(itemtype=="")
+        {
+            Toast.makeText(HomeActivity.this, "Select item type",Toast.LENGTH_LONG).show();
+
+        }
+
         Log.e("X", "lfc:" + username);
         if (filePath != null) {
 
@@ -151,12 +211,31 @@ public class HomeActivity extends AppCompatActivity {
             ref
                     = storageReference
                     .child(
-                            "images/"
+                            "images/"+itemtype+"/"
                                     + UUID.randomUUID().toString());
 
             final FirebaseFirestore db;
 
             db = FirebaseFirestore.getInstance();
+
+            db.collection("product_id")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    product_id=((Long) document.get("producr_id")).intValue();
+                                    product_id++;
+                                }
+
+                            } else {
+                                Log.e("N", "else");
+                            }
+                        }
+                    });
+
+
 
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -165,27 +244,37 @@ public class HomeActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Uri uri) {
                             downloadUrl = uri;
-                            // Log.e("uri","uri dekho"+downloadUrl);
                             Toast.makeText(HomeActivity.this, "Upload Done", Toast.LENGTH_LONG).show();
 
-//                            StorageMetadata metadata = new StorageMetadata.Builder()
-//                                    .setCustomMetadata("name", username)
-//                                    .setCustomMetadata("price", userprice)
-//                                    .build();
-//
-//                            Object uploadTask = ref.putFile(filePath, metadata);
+                            Map<String, Object> pid = new HashMap<>();
+                            pid.put("producr_id",product_id);
+
+                            db.collection("product_id").document("pid")
+                                    .set(pid)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("N", "pid updated!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("N", "Error writing document");
+                                        }
+                                    });
+
+
+
 
                             //After upload Complete we have to store the Data to firestore.
                             Map<String, Object> file = new HashMap<>();
-                            prod_id++;
-                            // String c = downloadUrl.toString();
-                            //Log.d("uri", "uri dekho 2 " + c);
                             file.put("url", downloadUrl.toString());// We are using it as String because our data type in Firestore will be String
                             file.put("name", username);
                             file.put("price", price_int);
-                            file.put("producr_id", prod_id);
+                            file.put("producr_id", product_id);
 
-                            db.collection("/downloadurl/").document(UUID.randomUUID().toString())
+                            db.collection(""+itemtype).document(UUID.randomUUID().toString())
                                     .set(file)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -207,6 +296,12 @@ public class HomeActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+
+    private boolean isEmpty(EditText c) {
+        CharSequence str = c.getText().toString();
+        return TextUtils.isEmpty(str);
     }
 
 }

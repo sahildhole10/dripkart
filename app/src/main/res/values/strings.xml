@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">dripkart</string>
+    <string-array name="names">
+        <item>Mobile</item>
+        <item>Headphone</item>
+        <item>PhoneCovers</item>
+        <item>Men_Shirts</item>
+        <item>Men_Tshirts</item>
+        <item>Men_Jeans</item>
+        <item>Men_Shirts</item>
+        <item>Shoes</item>
+    </string-array>
+
 </resources>

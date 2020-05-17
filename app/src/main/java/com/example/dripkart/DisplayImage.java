@@ -33,7 +33,7 @@ public class DisplayImage extends AppCompatActivity {
     public String id;
 
     ImageView myImage;
-    String url,z,name,email;
+    String url,name;
     int price,product_id;
     Button cart_button;
     final HashMap<String,Object> cartMap=new HashMap<>();
@@ -42,9 +42,7 @@ public class DisplayImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
-      z="sf";
         final Intent intent=getIntent();
-      //  Bundle b = intent.getExtras();
          Log.e("V","oncreate called");
         url = intent.getStringExtra("image_url");
         name = intent.getStringExtra("name");
@@ -69,58 +67,28 @@ public class DisplayImage extends AppCompatActivity {
                 cartMap.put("price", price);
                 cartMap.put("url", url);
 
-
                 //FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
                 //   String userid=user.getUid();
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     Log.d("X", "user not null");
                 }
-                //email = user.getEmail();
                 id=user.getUid();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 check(product_id,id);
 
-//See whether user's cart exist or not
-//                DocumentReference docIdRef = db.collection("cartdata").document(id);
-//                docIdRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            DocumentSnapshot document = task.getResult();
-//                            if (document.exists()) {
-//                                Log.d("X", "Document exists!");
-//                                count = 1;
-//                                check(product_id,id);
-//
-//                            } else {
-//                                Log.d("X", "Document does not exist!");
-//                                count = 0;
-//                                check(product_id,id);
-//
-//                            }
-//                        } else {
-//                            Log.d("X", "Failed with: ", task.getException());
-//                        }
-//                    }
-//                });
-                   Intent intent=new Intent(DisplayImage.this,ImagesActivity.class);
-                   startActivity(intent);
+//                   Intent intent=new Intent(DisplayImage.this,ImagesActivity.class);
+//                startActivity(intent);
             }
 
 
         });
     }
 
-
     private void check(int product_id,String id) {
 
         Log.d("X", "count:"+count);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        //If does not exist create new one
-//        if (count == 0) {
-         //   final HashMap<String,Object> cartMaps=new HashMap<>();
 
             db = FirebaseFirestore.getInstance();
             db.collection("/cartdata/").document(id)
@@ -138,27 +106,6 @@ public class DisplayImage extends AppCompatActivity {
                             Log.d("N", "Error writing document of cartmap");
                         }
                     });
-//        }
-        //If does exist update user
-//        else if(count==1){
-//
-//            db = FirebaseFirestore.getInstance();
-//            db.collection("/cartdata/").document(id).collection("/pid/").document(String.valueOf(product_id))
-//                    .update(cartMap)
-//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            Log.d("X", "DocumentSnapshot successfully updated!");
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Log.d("X", "Error updating document");
-//                        }
-//                    });
-//        }
-
 
     }
 

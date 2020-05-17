@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -35,14 +36,19 @@ public class ImagesActivity extends AppCompatActivity {
     private ProgressBar mProgressCircle;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    public String itemtype;
     private DatabaseReference mDatabaseRef;
     private List<Uploadurl> mUploads;
-  Button cartbutton;
+  ImageView cartimage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_images);
+
+        Intent intent=getIntent();
+        itemtype=intent.getStringExtra("itemtype");
+
 
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -52,9 +58,9 @@ public class ImagesActivity extends AppCompatActivity {
 
         mUploads = new ArrayList<>();
 
-        cartbutton =(Button) findViewById(R.id.cart);
+        cartimage =(ImageView) findViewById(R.id.cart);
 
-        cartbutton.setOnClickListener(new View.OnClickListener() {
+        cartimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent =new Intent(ImagesActivity.this,CartActivity.class);
@@ -62,7 +68,7 @@ public class ImagesActivity extends AppCompatActivity {
             }
         });
 
-                db.collection("downloadurl")
+                db.collection(""+itemtype)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
